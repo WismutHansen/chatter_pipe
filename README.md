@@ -30,7 +30,7 @@ This Python script enables real-time text-to-speech synthesis using the [Resembl
     uv sync
     ```
 
-## Usage
+## Usage: `chatter_pipe.py`
 
 Pipe text into the script, with one sentence per line. Optionally combine with [atqsm](https://github.com/WismutHansen/async-tqsm) to convert a stream of tokens into streamed sentences, so each sentences is turned into speech individually
 
@@ -50,4 +50,66 @@ cat sentences.txt | uv run chatter_pipe.py
 
 ```bash
 ollama run llama3.2:latest "How are you" | atqsm | uv run chatter_pipe.py
+```
+
+## Background TTS Service: `chatter_daemon.py`
+
+The `chatter_daemon.py` script provides a persistent, background text-to-speech service. It listens for text input on a named pipe (FIFO), synthesizes it into speech using ChatterboxTTS, and then either plays the audio directly or saves it as a WAV file. This allows other applications to easily integrate TTS capabilities by simply writing text to the named pipe.
+
+### Features
+
+- **Background Service:** Runs continuously after being started.
+- **Named Pipe Input:** Accepts text lines from any process that can write to its named pipe.
+- **Flexible Output:**
+    - Play audio directly using `sounddevice`.
+    - Save audio as WAV files to a specified directory using `soundfile`.
+- **Concurrent Processing:** Uses a queueing system to process TTS and audio output without blocking new input from the pipe.
+- **Configurable:** Pipe name, output mode, and output directory can be customized via command-line arguments.
+- **Graceful Shutdown:** Handles `SIGINT` (Ctrl+C) and `SIGTERM` for proper cleanup.
+
+### Prerequisites (in addition to base prerequisites)
+
+- **`soundfile`:** Required if using the file output mode. You can install it via pip:
+  ```bash
+  uv pip install soundfile
+  ```
+  (Ensure `sounddevice` is also installed as per the main project setup if you intend to use playback mode.)
+
+### Usage
+
+1.  **Start the daemon:**
+    Run the script from your terminal. It's recommended to run it in the background using `&`.
+    ```bash
+    uv run chatter_daemon.py &
+    ```
+    You can also redirect its standard error (where logs are printed) to a file:
+    ```bash
+    uv run chatter_daemon.py > /tmp/chatter_daemon.log 2>&1 &
+    ```
+
+2.  **Send text to the daemon:**
+    Once the daemon is running, write sentences to its named pipe. By default, the pipe is located at `/tmp/chatter_fifo`.
+    ```bash
+    echo "Hello, daemon world!" > /tmp/chatter_fifo
+    echo "This message will be spoken or saved to a file." > /tmp/chatter_fifo
+    ```
+
+### Command-Line Options
+
+-   `--pipe-name <path>`: Specifies the path for the named pipe.
+    (Default: `/tmp/chatter_fifo`)
+-   `--output-mode <mode>`: Sets the audio output mode.
+    -   `play`: Plays audio directly (default).
+    -   `file`: Saves audio as WAV files.
+-   `--output-dir <directory>`: Specifies the directory for saving WAV files when `--output-mode` is `file`.
+    (Default: `./audio_output/`)
+-   `--debug`: Enables verbose debug logging to standard error.
+
+**Example: Start daemon to save files to `my_audio_clips/` using a custom pipe**
+```bash
+uv run chatter_daemon.py --output-mode file --output-dir my_audio_clips/ --pipe-name /tmp/my_tts_pipe &
+```
+Then, to send text:
+```bash
+echo "Save this clip." > /tmp/my_tts_pipe
 ```
