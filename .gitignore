@@ -1,5 +1,6 @@
 *.egg-info
 *.py[oc]
+*.wav
 .DS_Store
 .env 
 .venv
