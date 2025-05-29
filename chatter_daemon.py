@@ -29,6 +29,9 @@ Command-Line Arguments:
   --output-dir DIR      : Directory to save WAV files if --output-mode is 'file'.
                           (Default: ./audio_output/)
   --debug               : Enables verbose debug logging to stderr.
+  -r, --ref-voice       : Path to reference audio file.
+  -e, --exaggeration    : Style exaggeration (default: 0.5)
+  -t, --temperature     : Temperature (default: 0.5)
 
 Key Dependencies:
 - chatterbox.tts (from Resemble AI's Chatterbox) for speech synthesis.

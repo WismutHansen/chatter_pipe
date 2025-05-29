@@ -21,15 +21,15 @@ This Python script enables real-time text-to-speech synthesis using the [Resembl
 
 1. **Clone the repository (if you haven't already):**
 
-    ```bash
-    git clone https://github.com/WismutHansen/chatter_pipe.git
-    ```
+   ```bash
+   git clone https://github.com/WismutHansen/chatter_pipe.git
+   ```
 
 2. **Install dependencies**
 
-    ```bash
-    uv sync
-    ```
+   ```bash
+   uv sync
+   ```
 
 ## Usage: `chatter_pipe.py`
 
@@ -81,25 +81,25 @@ The `chatter_daemon.py` script provides a persistent, background text-to-speech 
 ### Usage
 
 1. **Start the daemon:**
-    Run the script from your terminal. It's recommended to run it in the background using `&`.
+   Run the script from your terminal. It's recommended to run it in the background using `&`.
 
-    ```bash
-    uv run chatter_daemon.py &
-    ```
+   ```bash
+   uv run chatter_daemon.py &
+   ```
 
-    You can also redirect its standard error (where logs are printed) to a file:
+   You can also redirect its standard error (where logs are printed) to a file:
 
-    ```bash
-    uv run chatter_daemon.py > /tmp/chatter_daemon.log 2>&1 &
-    ```
+   ```bash
+   uv run chatter_daemon.py > /tmp/chatter_daemon.log 2>&1 &
+   ```
 
 2. **Send text to the daemon:**
-    Once the daemon is running, write sentences to its named pipe. By default, the pipe is located at `/tmp/chatter_fifo`.
+   Once the daemon is running, write sentences to its named pipe. By default, the pipe is located at `/tmp/chatter_fifo`.
 
-    ```bash
-    echo "Hello, daemon world!" > /tmp/chatter_fifo
-    echo "This message will be spoken or saved to a file." > /tmp/chatter_fifo
-    ```
+   ```bash
+   echo "Hello, daemon world!" > /tmp/chatter_fifo
+   echo "This message will be spoken or saved to a file." > /tmp/chatter_fifo
+   ```
 
 ### Command-Line Options
 
@@ -112,7 +112,7 @@ The `chatter_daemon.py` script provides a persistent, background text-to-speech 
   (Default: `./audio_output/`)
 - `--debug`: Enables verbose debug logging to standard error.
 - `-r`, '--reference-audio': Path to referece audio for 0-shot voice cloning.
-- `-r`, `--reference-audio`: Path to referece audio for 0-shot voice cloning.
+- `-r`, `--ref-voice`: Path to referece audio for 0-shot voice cloning.
 - `-e`, `--exaggeration`: Style exaggeration (default: 0.5).
 - `-t`, `--temperature`: temperature (default: 0.5).
 
